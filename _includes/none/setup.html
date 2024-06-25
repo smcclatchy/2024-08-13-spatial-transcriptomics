@@ -1,56 +1,46 @@
-For this lesson, we will be working in the R programming language and the RStudio
-development environment. You should be able to install these using Software Center 
-(Windows) or the JAX Self Service app (Mac). If you already have R installed, make
-sure it is version 4.3.X. Open RStudio to find out what version of R is on your laptop.
-
-In addition to R and RStudio, you will need to download and install many software 
-packages as well as the data we will use in the course. Please do all of this before 
-you arrive so that you can start the course on time with everyone else.
-
-If you are using your own personal laptop you can follow the instructions below.
 {% include install_instructions/r.html %}
 
 <h3>R Packages</h3>
+Next, we will install the required packages for this lesson. Note that the 
+[spacexr](https://github.com/dmcable/spacexr) 
+package takes a long time to download. It may take up to 30 minutes for it to install.
 
 In RStudio, copy and paste the following commands into the Console:
 
-~~~
-install.packages(c("BiocManager", "data.table",  "doMC",  "ggExtra", "hdf5r",
-                   "here",        "igraph",      "leiden", "Matrix", "matrixStats", 
-                   "plyr",        "rcartocolor", "remotes",
-                   "Rfast2",      "Seurat",      "tidyverse"), dependencies = TRUE)
-BiocManager::install(c("glmGamPoi", "rhdf5"))
+```r
+pkgs <- c("BiocManager", "data.table",  "ggExtra", "hdf5r",
+          "here",        "igraph",      "leiden", "Matrix", "matrixStats", 
+          "plyr",        "rcartocolor", "remotes",
+          "Rfast2",      "Seurat",      "tidyverse", "R.utils")
+for(pkg in pkgs) {
+  if(!require(pkg, character.only=TRUE)) {
+    install.packages(pkg, dependencies = TRUE)
+  }
+}
+BiocManager::install(c("glmGamPoi", "rhdf5", "ComplexHeatmap"))
 
 options(timeout = 1e6)
-remotes::install_github("immunogenomics/harmony", build_vignettes = FALSE)
-remotes::install_github("dmcable/spacexr", build_vignettes = FALSE)
-~~~
-{: .r}
-
-Note that the [spacexr](https://github.com/dmcable/spacexr) package takes a long time to download
-and install (> 30 minutes).
+remotes::install_github("immunogenomics/presto",  build_vignettes = FALSE)
+remotes::install_github("dmcable/spacexr",        build_vignettes = FALSE)
+```
 
 Once the installation has finished, copy and paste the following commands into the 
-console to verify that all packages installed correctly.
+console to verify that both packages installed correctly.
 
 ~~~
 library(BiocManager)
 library(data.table)
-library(doMC)
-library(ggExtra)
+library(R.utils)
 library(hdf5r)
 library(here)
-library(igraph)
-library(leiden)
-library(Matrix)
-library(matrixStats)
-library(plyr)
+library(presto)
 library(rcartocolor)
 library(remotes)
-library(Rfast2)
 library(spacexr)
+library(sparseMatrixStats)
 library(Seurat)
 library(tidyverse)
+library(ComplexHeatmap)
 ~~~
 {: .r}
 
@@ -109,6 +99,7 @@ download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/xgm
 download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/gw2e7d47tihg25df8hahelrhx42y345o.csv",
               destfile = "data/151508/spatial/tissue_positions_list.csv",
               mode     = "wb")
+
 dir.create("data/151673/spatial", recursive = TRUE)
 download.file(url = "https://thejacksonlaboratory.box.com/shared/static/ge38lg6u1i45n3grusrdyd3nccukl489.h5",
               destfile = "data/151673/151673_raw_feature_bc_matrix.h5", mode = "wb")
@@ -126,8 +117,22 @@ download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/8tg
 download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/drlayml5otq7n2xedndm0qsqly58g306.csv",
               destfile = "data/151673/spatial/tissue_positions_list.csv",
               mode     = "wb")
+
+
 download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/ny1wokl6sz1xjzz68aftbk209se5nvws.tsv",
               destfile = "data/spot-meta.tsv",
+              mode     = "wb")
+
+dir.create("data/scRNA-seq", recursive = TRUE)
+download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/ydu9rbdhum5qrvuijze23qwz7dlztefo.tsv",
+              destfile = "data/scRNA-seq/sc_cell_types.tsv",
+              mode     = "wb")
+download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/lasxuiq5wi3ms1jnokzmm7pp4hptr8ma.gz",
+              destfile = "data/scRNA-seq/sc_counts.tsv.gz",
+              mode     = "wb")
+
+download.file(url      = "https://thejacksonlaboratory.box.com/shared/static/dt2chlmxtjajxfnlpfzolz1tvb6kic7p.rds",
+              destfile = "data/rctd-sample-1.rds",
               mode     = "wb")
 ~~~
 {: .r}
